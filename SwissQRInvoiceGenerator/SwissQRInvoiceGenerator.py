@@ -734,6 +734,10 @@ def createQRInvoice(json, returnHTML=False, pdfName="Invoice"):
         return template
     else:
         import pdfkit
+        import platform
+        config = None
+        if platform.system() == "Windows":
+            config = pdfkit.configuration(wkhtmltopdf="C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe")
         pdfkit.from_string(template, pdfName + ".pdf", options=options,
                            configuration=config)
 
