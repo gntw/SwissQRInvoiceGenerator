@@ -1,6 +1,8 @@
 import io
 import qrcode
 import qrcode.image.svg
+import pdfkit
+import platform
 
 def generateRF_ISO_11649(refStr):
     """
@@ -76,7 +78,7 @@ def create_qr_code(json):
               + json["additional_information"] + "\n" \
               + "EPD"
 
-    img = qrcode.make(qr_data, image_factory=qrcode.image.svg.SvgImage)
+    img = qrcode.make(qr_data, image_factory=qrcode.image.svg.SvgPathImage)
     buffered = io.BytesIO()
     img.save(buffered, "SVG")
     xml_str = buffered.getvalue().decode("utf-8")
@@ -84,16 +86,20 @@ def create_qr_code(json):
 
     if closing_tag_pos >= 0:
         swiss_cross = """
-        <rect x="25.9mm" y="25.9mm" class="st0" width="9.2mm" height="9.2mm"/>
-        <rect x="27.5mm" y="27.5mm" width="6mm" height="6mm"/>
-        <rect x="28.5mm" y="30mm" class="st0" width="4mm" height="1mm"/>
-        <rect x="30mm" y="28.5mm" class="st0" width="1mm" height="4mm"/>
-        <style type="text/css">.st0{fill:#FFFFFF;}</style>
+        <svg x="45%" y="45%" width="10%" height="10%" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0" y="0" class="st0" width="100%" height="100%"/>
+            <rect x="5%" y="5%" width="90%" height="90%"/>
+            <rect x="15%" y="42.5%" class="st0" width="70%" height="15%"/>
+            <rect x="42.5%" y="15%" class="st0" width="15%" height="70%"/>
+            <style type="text/css">
+                .st0{fill:#FFFFFF;}
+            </style>
+        </svg>
         """
 
         xml_str = xml_str[:closing_tag_pos] + swiss_cross + xml_str[
                                                             closing_tag_pos:]
-
+    print(xml_str)
     return xml_str
 
 
@@ -733,8 +739,6 @@ def createQRInvoice(json, returnHTML=False, pdfName="Invoice"):
     if returnHTML:
         return template
     else:
-        import pdfkit
-        import platform
         config = None
         if platform.system() == "Windows":
             config = pdfkit.configuration(wkhtmltopdf="C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe")

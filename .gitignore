@@ -140,7 +140,8 @@ temp
 *.html
 
 *.pdf
-*.svg
 *.png
 *.tar
 *.gz
+
+SwissQRInvoiceGenerator.egg-info
