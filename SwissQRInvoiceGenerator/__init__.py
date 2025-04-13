@@ -1,1 +1,1 @@
-import QRInvoice
+from .SwissQRInvoiceGenerator import createQRInvoice
